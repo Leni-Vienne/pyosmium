@@ -65,6 +65,16 @@ static py::object tag_iterator_next(TagIterator &it, TagIterator const &cend)
 }
 
 
+static py::dict tags_to_dict(osmium::TagList const &tags)
+{
+    py::dict result;
+    for (auto const &tag : tags) {
+        result[py::str(tag.key())] = py::str(tag.value());
+    }
+    return result;
+}
+
+
 static py::object member_iterator_next(MemberIterator &it, MemberIterator const &cend)
 {
     if (it == cend)
@@ -145,6 +155,8 @@ py::class_<COSMObject> make_osm_object_class(py::module_ &m, char const *class_n
         .def("tags_begin", [](COSMObject const &o) { return o.get()->tags().cbegin(); })
         .def("tags_next", [](COSMObject const &o, TagIterator &it)
             { return tag_iterator_next(it, o.get()->tags().cend()); })
+        .def("tags_to_dict", [](COSMObject const &o)
+            { return tags_to_dict(o.get()->tags()); })
         .def("is_valid", &COSMObject::is_valid)
     ;
 }
@@ -312,6 +324,8 @@ PYBIND11_MODULE(_osm, m)
         .def("tags_begin", [](pyosmium::COSMChangeset const &o) { return o.get()->tags().cbegin(); })
         .def("tags_next", [](pyosmium::COSMChangeset const &o, TagIterator &it)
             { return tag_iterator_next(it, o.get()->tags().cend()); })
+        .def("tags_to_dict", [](pyosmium::COSMChangeset const &o)
+            { return tags_to_dict(o.get()->tags()); })
         .def("is_valid", &pyosmium::COSMChangeset::is_valid)
     ;
 

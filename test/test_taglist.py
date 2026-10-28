@@ -126,3 +126,28 @@ def test_taglist_indexop_get(tag_handler):
     tags = tag_handler("n234 Tabba=x,2=vvv,xx=abba", tests)
 
     assert tags == {'abba': 'x', '2': 'vvv', 'xx': 'abba'}
+
+
+def test_taglist_to_dict(tag_handler):
+    def tests(n):
+        result = n.tags.to_dict()
+        assert result == {'abba': 'x', '2': 'vvv', 'xx': 'abba'}
+        assert list(result) == ['abba', '2', 'xx']
+        assert all(type(key) is str and type(value) is str
+                   for key, value in result.items())
+        # The dictionary owns independent string objects.
+        result['new'] = 'value'
+        assert 'new' not in n.tags
+
+    tags = tag_handler("n234 Tabba=x,2=vvv,xx=abba", tests)
+
+    assert tags == {'abba': 'x', '2': 'vvv', 'xx': 'abba'}
+
+
+def test_taglist_to_dict_unicode(tag_handler):
+    def tests(n):
+        assert n.tags.to_dict() == {'keyñ': 'value'}
+
+    tags = tag_handler("n2 Tkeyñ=value", tests)
+
+    assert tags == {'keyñ': 'value'}

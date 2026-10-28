@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2024 Sarah Hoffmann <lonvia@denofr.de> and others.
 # For a full list of authors see the git log.
-from typing import ClassVar, Iterator, Tuple, Optional, Any
+from typing import ClassVar, Iterator, Tuple, Optional, Any, Dict
 
 from typing import overload
 import datetime
@@ -91,6 +91,7 @@ class TagContainerProtocol(BufferProxyProtocol):
     def tags_has_key(self, key: str) -> bool: ...
     def tags_begin(self) -> CTagListIterator: ...
     def tags_next(self, it: CTagListIterator) -> osmium.osm.types.Tag: ...
+    def tags_to_dict(self) -> Dict[str, str]: ...
 
 class COSMObject(TagContainerProtocol):
     def positive_id(self) -> int: ...

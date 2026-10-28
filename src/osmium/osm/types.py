@@ -5,7 +5,7 @@
 # Copyright (C) 2025 Sarah Hoffmann <lonvia@denofr.de> and others.
 # For a full list of authors see the git log.
 from typing import Any, NamedTuple, Callable, Optional, Iterator, \
-                   Iterable, TYPE_CHECKING, TypeVar, Generic, Tuple, Union
+                   Iterable, TYPE_CHECKING, TypeVar, Generic, Tuple, Union, Dict
 import datetime as dt
 
 import osmium.osm.mutable
@@ -101,6 +101,14 @@ class TagList(Iterable[Tag]):
 
     def __iter__(self) -> TagIterator:
         return TagIterator(self._pyosmium_data)
+
+    def to_dict(self) -> Dict[str, str]:
+        """ Return the tags as a dictionary.
+
+            This is equivalent to ``{tag.k: tag.v for tag in tags}``, including
+            insertion order and last-value-wins behaviour for duplicate keys.
+        """
+        return self._pyosmium_data.tags_to_dict()
 
     def __str__(self) -> str:
         if self._pyosmium_data.is_valid():
